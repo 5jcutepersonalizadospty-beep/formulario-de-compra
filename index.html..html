@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Datos importantes de compra - 5J CUTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6ff;--card:#fff;--ink:#2a1b3d;--mut:#6b5b7e;--line:#e3d6f2;--pur:#6d28d9;--pink:#ec4899;--tur:#0d9488;--turbg:#d9f7f3;--err:#c81e4d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1127;--card:#251838;--ink:#f3ebfb;--mut:#bba9d0;--line:#44305f;--pur:#a78bfa;--pink:#f472b6;--tur:#2dd4bf;--turbg:#12403c;--err:#ff6b8f}}
+:root[data-theme="dark"]{--bg:#1a1127;--card:#251838;--ink:#f3ebfb;--mut:#bba9d0;--line:#44305f;--pur:#a78bfa;--pink:#f472b6;--tur:#2dd4bf;--turbg:#12403c;--err:#ff6b8f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 Nunito,system-ui,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px 40px}
+header{background:linear-gradient(120deg,#6d28d9,#ec4899 60%,#14b8a6);color:#fff;padding:22px 18px 20px;border-radius:0 0 26px 26px;margin:0 -14px 16px}
+header h1{font:800 28px/1.1 "Baloo 2",Nunito,sans-serif;margin:0 0 4px}
+header p{margin:0;opacity:.95}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.card h2{font:800 20px/1.2 "Baloo 2",Nunito,sans-serif;margin:0 0 10px;color:var(--pur)}
+.item{border-color:var(--pur)}
+.item h2{display:flex;justify-content:space-between;align-items:center;gap:8px}
+label{display:block;font-weight:700;margin:12px 0 4px}
+.req{color:var(--pink);font-weight:800}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px;min-height:48px}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--tur);outline-offset:1px}
+.bad{border-color:var(--err)}
+.msg{color:var(--err);font-weight:700;font-size:15px;margin-top:4px}
+.note{background:var(--turbg);border-radius:12px;padding:10px 12px;font-size:15px;margin:10px 0 0}
+button{font:700 17px Nunito,sans-serif;border:0;border-radius:14px;padding:14px 18px;min-height:50px;cursor:pointer;width:100%}
+.main{background:linear-gradient(90deg,var(--pur),var(--pink));color:#fff}
+.add{background:var(--turbg);color:var(--tur);border:2px dashed var(--tur);margin-bottom:14px}
+.ghost{background:transparent;color:var(--pur);border:2px solid var(--pur);margin-top:10px}
+.del{width:auto;min-height:40px;padding:6px 12px;font-size:15px;background:transparent;color:var(--err);border:2px solid var(--err)}
+.sub{font-weight:700;color:var(--tur);margin-top:10px}
+.thumb{max-width:100%;max-height:170px;border-radius:12px;margin-top:8px;border:2px solid var(--line)}
+.sum{white-space:pre-wrap;font:15px/1.5 Nunito,sans-serif;margin:0;word-break:break-word}
+.total{font:800 24px "Baloo 2",Nunito,sans-serif;color:var(--tur);text-align:right;margin:4px 0 14px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tur);color:#fff;padding:12px 20px;border-radius:30px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Datos importantes de compra</h1><p>5J CUTE · Personalizados con cariño. Cuéntanos qué necesitas.</p></header>
+
+<div id="form">
+  <p>Los campos con <span class="req">*</span> son obligatorios. Puedes corregir cualquier respuesta antes de enviar.</p>
+  <div class="card"><h2>Tus datos</h2>
+    <div id="cust"></div>
+  </div>
+  <div id="items"></div>
+  <button class="add" id="addBtn" type="button">Agregar otra prenda</button>
+  <button class="main" id="goBtn" type="button">Ver mi resumen</button>
+</div>
+
+<div id="summary" class="hide">
+  <div class="card"><h2>Tu resumen</h2><pre class="sum" id="sumText"></pre><div id="thumbs"></div></div>
+  <div class="total" id="sumTotal"></div>
+  <button class="main" id="copyBtn" type="button">Copiar resumen</button>
+  <button class="ghost" id="backBtn" type="button">Corregir mis respuestas</button>
+  <div class="note">Después de copiar, envíanos el resumen junto con las imágenes de tus diseños por separado.</div>
+</div>
+</div>
+<div class="toast" id="toast">¡Resumen copiado!</div>
+
+<script>
+var S7=['S','M','L','XL','2XL','3XL','4XL'],KID=['4','6','8','10','12','14','16'],C4=['Rojo','Blanco','Azul','Negro'];
+var NS=['6','8','10','12','14','16','S','M','L','XL','2XL'];
+var SW={'Nova':{sizes:NS,colors:C4,p:{'Frontal':15,'Tira':18}},'Prime':{sizes:['S','M','L','XL','2XL','3XL'],colors:C4,p:{'Frontal':18,'Tira':20}},'Algodón':{sizes:NS,colors:C4,p:{'Frontal':12,'Tira':16}}};
+var st={name:'',dest:'',date:'',items:[blank()]},errs={};
+function blank(){return{type:'',cls:'',gender:'',color:'',size:'',qty:1,pos:'',notes:'',img:null,imgName:''}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function spec(it){
+  if(it.type==='Camisa')return{g:1,sizes:['S','M','L','XL','2XL','3XL'],colors:['Blanco','Rojo','Azul','Negro','Fucsia'],pos:null,price:28};
+  if(it.type==='Polo')return{g:1,sizes:NS,colors:C4,pos:null,price:25};
+  if(it.type==='Suéter cuello redondo'&&it.cls){var s=SW[it.cls];return{g:1,sizes:s.sizes,colors:s.colors,pos:Object.keys(s.p),price:s.p[it.pos]||null,p:s.p}}
+  return null;
+}
+function price(it){var s=spec(it);return s&&s.price?s.price:0}
+function bad(k){return errs[k]?' bad':''}
+function msg(k){return errs[k]?'<div class="msg">Falta este dato</div>':''}
+function sel(i,f,opts,val,ph,k){
+  var h='<select data-i="'+i+'" data-f="'+f+'" class="'+bad(k)+'"><option value="">'+ph+'</option>';
+  opts.forEach(function(o){var v=typeof o==='object'?o[0]:o,l=typeof o==='object'?o[1]:o;h+='<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+esc(l)+'</option>'});
+  return h+'</select>'+msg(k);
+}
+function renderCust(){
+  $('cust').innerHTML=
+   '<label>Tu nombre <span class="req">*</span></label><input id="c_name" class="'+bad('name')+'" value="'+esc(st.name)+'" autocomplete="name">'+msg('name')+
+   '<label>¿A dónde se envía? <span class="req">*</span></label><input id="c_dest" class="'+bad('dest')+'" value="'+esc(st.dest)+'" placeholder="Ej. provincia, distrito y corregimiento">'+msg('dest')+
+   '<label>¿Para qué fecha lo necesitas? <span class="req">*</span></label><input id="c_date" type="date" class="'+bad('date')+'" value="'+esc(st.date)+'">'+msg('date');
+  $('c_name').oninput=function(){st.name=this.value};$('c_dest').oninput=function(){st.dest=this.value};$('c_date').onchange=function(){st.date=this.value};
+  $('c_date').min=new Date().toISOString().slice(0,10);
+}
+function $(id){return document.getElementById(id)}
+function renderItems(){
+  var h='';
+  st.items.forEach(function(it,i){
+    var s=spec(it),k=function(f){return i+':'+f};
+    h+='<div class="card item"><h2><span>Prenda '+(i+1)+'</span>'+(st.items.length>1?'<button class="del" type="button" data-del="'+i+'">Quitar</button>':'')+'</h2>';
+    h+='<label>¿Qué prenda quieres? <span class="req">*</span></label>'+sel(i,'type',['Camisa','Polo','Suéter cuello redondo'],it.type,'Elige una opción',k('type'));
+    if(it.type==='Suéter cuello redondo')h+='<label>Clase de suéter <span class="req">*</span></label>'+sel(i,'cls',['Nova','Prime','Algodón'],it.cls,'Elige una clase',k('cls'));
+    if(s){
+      if(s.g)h+='<label>¿Para quién es? <span class="req">*</span></label>'+sel(i,'gender',[['F','Mujer'],['M','Hombre']],it.gender,'Elige una opción',k('gender'));
+      h+='<label>Color <span class="req">*</span></label>'+sel(i,'color',s.colors,it.color,'Elige un color',k('color'));
+      h+='<label>Talla <span class="req">*</span></label>'+sel(i,'size',s.sizes,it.size,'Elige una talla',k('size'));
+      if(it.type==='Polo')h+='<div class="note">El polo lleva el diseño de tira.</div>';
+      if(s.pos)h+='<label>Tipo de diseño <span class="req">*</span></label>'+sel(i,'pos',s.pos.map(function(p){return[p,p+' ($'+s.p[p]+')']}),it.pos,'Elige una opción',k('pos'));
+      h+='<label>Cantidad <span class="req">*</span></label><input type="number" min="1" inputmode="numeric" data-i="'+i+'" data-f="qty" value="'+it.qty+'" class="'+bad(k('qty'))+'">'+msg(k('qty'));
+      h+='<label>Notas del diseño (opcional)</label><textarea data-i="'+i+'" data-f="notes" placeholder="Nombre, texto, frase o detalle que quieras">'+esc(it.notes)+'</textarea>';
+      h+='<label>Captura del diseño (opcional)</label><input type="file" accept="image/*" data-i="'+i+'" data-f="img"><div class="note">Puedes subirla aquí para verla en tu resumen. Recuerda enviarnos la captura de tu diseño por separado.</div>';
+      if(it.img)h+='<img class="thumb" src="'+it.img+'" alt="Diseño de la prenda '+(i+1)+'">';
+      h+='<div class="note">Si quieres un diseño o arte distinto a los de nuestro catálogo, se cotiza aparte.</div>';
+      if(price(it))h+='<div class="sub">Subtotal: $'+(price(it)*(parseInt(it.qty)||0)).toFixed(2)+'</div>';
+    }
+    h+='</div>';
+  });
+  $('items').innerHTML=h;
+}
+function reset(it,keepType){var t=it.type,n=it.notes,q=it.qty,im=it.img,imn=it.imgName;Object.assign(it,blank());it.type=t;it.notes=n;it.qty=q;it.img=im;it.imgName=imn}
+$('items').addEventListener('change',function(e){
+  var t=e.target,f=t.dataset.f,i=t.dataset.i;if(f===undefined)return;var it=st.items[i];
+  if(f==='img'){var fl=t.files[0];if(!fl)return;var r=new FileReader();r.onload=function(){it.img=r.result;it.imgName=fl.name;delete errs[i+':img'];renderItems()};r.readAsDataURL(fl);return}
+  it[f]=t.value;delete errs[i+':'+f];
+  if(f==='type'){it.cls='';it.gender='';it.color='';it.size='';it.pos=''}
+  if(f==='cls'){it.color='';it.size='';it.pos=''}
+  if(f==='type'||f==='cls'||f==='pos'||f==='qty')renderItems();
+});
+$('items').addEventListener('input',function(e){var t=e.target;if(t.dataset.f==='notes')st.items[t.dataset.i].notes=t.value});
+$('items').addEventListener('click',function(e){var d=e.target.dataset.del;if(d===undefined)return;st.items.splice(+d,1);errs={};renderItems()});
+$('addBtn').onclick=function(){st.items.push(blank());renderItems();var c=document.querySelectorAll('.item');c[c.length-1].scrollIntoView({behavior:'smooth'})};
+function validate(){
+  errs={};
+  if(!st.name.trim())errs.name=1;if(!st.dest.trim())errs.dest=1;if(!st.date)errs.date=1;
+  st.items.forEach(function(it,i){
+    var s=spec(it);if(!it.type)errs[i+':type']=1;
+    if(it.type==='Suéter cuello redondo'&&!it.cls)errs[i+':cls']=1;
+    if(!s)return;
+    if(s.g&&!it.gender)errs[i+':gender']=1;if(!it.color)errs[i+':color']=1;if(!it.size)errs[i+':size']=1;
+    if(s.pos&&!it.pos)errs[i+':pos']=1;if(!(parseInt(it.qty)>0))errs[i+':qty']=1;
+  });
+  return Object.keys(errs).length===0;
+}
+function fmtDate(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+var txt='';
+function build(){
+  var tot=0,L=['*Datos importantes de compra - 5J CUTE*','','Cliente: '+st.name.trim(),'Envío a: '+st.dest.trim(),'Fecha que lo necesita: '+fmtDate(st.date),''];
+  st.items.forEach(function(it,i){
+    var s=spec(it),pr=price(it),q=parseInt(it.qty),sub=pr*q;tot+=sub;
+    var nm=it.type==='Suéter cuello redondo'?'Suéter cuello redondo '+it.cls:it.type;
+    L.push('*Prenda '+(i+1)+': '+nm+'*');
+    if(s.g)L.push('Para: '+(it.gender==='F'?'Mujer':'Hombre'));
+    L.push('Color: '+it.color,'Talla: '+it.size,'Diseño: '+(s.pos?it.pos:'Tira'),'Cantidad: '+q,'Precio: $'+pr.toFixed(2)+' c/u = $'+sub.toFixed(2));
+    if(it.notes.trim())L.push('Notas: '+it.notes.trim());
+    L.push('Captura del diseño: se envía por separado','');
+  });
+  L.push('*Total: $'+tot.toFixed(2)+'* (el envío se cotiza aparte)');
+  txt=L.join('\n');
+  $('sumText').textContent=txt;
+  $('sumTotal').textContent='Total: $'+tot.toFixed(2);
+  $('thumbs').innerHTML=st.items.map(function(it,i){return it.img?'<div class="sub">Diseño de la prenda '+(i+1)+'</div><img class="thumb" src="'+it.img+'" alt="Diseño '+(i+1)+'">':''}).join('');
+}
+$('goBtn').onclick=function(){
+  if(!validate()){renderCust();renderItems();var b=document.querySelector('.bad');if(b)b.scrollIntoView({behavior:'smooth',block:'center'});return}
+  build();$('form').classList.add('hide');$('summary').classList.remove('hide');window.scrollTo(0,0);
+};
+$('backBtn').onclick=function(){$('summary').classList.add('hide');$('form').classList.remove('hide');window.scrollTo(0,0)};
+function done(){var t=$('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},2000)}
+function fallback(){var a=document.createElement('textarea');a.value=txt;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}document.body.removeChild(a)}
+$('copyBtn').onclick=function(){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback)}else fallback();
+};
+renderCust();renderItems();
+</script>
+</body>
+</html>
